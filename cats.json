@@ -1,0 +1,29 @@
+[
+  {
+    "imageURL": "https://images.unsplash.com/photo-1489084917528-a57e68a79a1e?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=43cb78de7049ab49aaa8b6ce363b8986&auto=format&fit=crop&w=500&q=60",
+    "imageDescription": "Orange bengal cat with black stripes lounging on concrete.",
+    "name": "Fluffy",
+    "sex": "Female",
+    "age": 2,
+    "breed": "Bengal",
+    "story": "Thrown on the street"
+  },
+  {
+    "imageURL": "https://images.unsplash.com/photo-1533738699159-d0c68059bb61?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0bb9888db1d270eab08c77f41120dfca&auto=format&fit=crop&w=500&q=60",
+    "imageDescription": "Orange bengal cat with black stripes lounging on concrete.",
+    "name": "notsoFluffy",
+    "sex": "Male",
+    "age": 1,
+    "breed": "Bengal",
+    "story": "Thrown on the shelter"
+  },
+  {
+    "imageURL": "https://images.unsplash.com/photo-1520697227012-1a7f0fd6c5c1?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=fd6c63df5be4855f120d5bf59f5b71f7&auto=format&fit=crop&w=500&q=60",
+    "imageDescription": "Orange bengal cat with black stripes lounging on concrete.",
+    "name": "sgt. Cake",
+    "sex": "Male",
+    "age": 5,
+    "breed": "Bengal",
+    "story": "fought his way to the street"
+  }
+]
