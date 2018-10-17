@@ -1,0 +1,62 @@
+[
+  {
+    "russian": "Привет",
+    "translit": "pree-vyEt",
+    "english": "hello",
+    "starting_order": 0
+  },
+  {
+    "russian": "Спасибо",
+    "translit": "spah-sE-bo",
+    "english": "thank you",
+    "starting_order": 1
+  },
+  {
+    "russian": "Друг",
+    "translit": "droog",
+    "english": "friend",
+    "starting_order": 2
+  },
+  {
+    "russian": "Успех",
+    "translit": "oos-pEh",
+    "english": "success",
+    "starting_order": 3
+  },
+  {
+    "russian": "Семья",
+    "translit": "sem-yA",
+    "english": "family",
+    "starting_order": 4
+  },
+  {
+    "russian": "Мир",
+    "translit": "meer",
+    "english": "peace",
+    "starting_order": 5
+  },
+  {
+    "russian": "Уважение",
+    "translit": "oo-vazhE-ni-ye",
+    "english": "respect",
+    "starting_order": 6
+  },
+  {
+    "russian": "Знакомиться",
+    "translit": "zna-kO-mit-sya",
+    "english": "to meet",
+    "starting_order": 7
+  },
+  {
+    "russian": "Приятный",
+    "translit": "pri-yAt-ny",
+    "english": "nice",
+    "starting_order": 8
+  },
+  {
+    "russian": "До свидания",
+    "translit": "da-svidA-ni-ya",
+    "english": "goodbye",
+    "starting_order": 9
+  }
+]

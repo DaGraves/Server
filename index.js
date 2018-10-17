@@ -1,43 +1,68 @@
 'use strict';
 
+// npm packages
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { catQ, dogQ } = require('./queue-class');
+const passport = require('passport');
+
+// config
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
-// const {dbConnect} = require('./db-knex');
 
+// middlewares
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
+
+// routers
+const userRouter = require('./routes/user');
+const authRouter = require('./routes/auth');
+const wordRouter = require('./routes/word');
+
+// initialization
 const app = express();
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
+// Log all requests. Skip during testing
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
   })
 );
 
+// only allow requests from our client
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
 
-app.get('/api/cat', (req, res, next) => {
-  res.json(catQ.peek());
+// parse request body
+app.use(express.json());
+
+// mount routers
+app.use('/api', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/word', wordRouter);
+
+
+// Custom 404 Not Found route handler
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-app.get('/api/dog', (req, res, next) => {
-  res.json(dogQ.peek());
-});
-
-app.delete('/api/cat', (req, res, next) => {
-  catQ.dequeue();
-  res.sendStatus(204);
-});
-
-app.delete('/api/dog', (req, res, next) => {
-  dogQ.dequeue();
-  res.sendStatus(204);
+// Custom Error Handler
+app.use((err, req, res, next) => {
+  if (err.status) {
+    const errBody = Object.assign({}, err, { message: err.message });
+    res.status(err.status).json(errBody);
+  } else {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 function runServer(port = PORT) {
