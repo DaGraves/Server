@@ -20,29 +20,25 @@ const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const wordRouter = require('./routes/word');
 
-// initialization
 const app = express();
+const router = express.Router();
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-// Log all requests. Skip during testing
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
   })
 );
 
-// only allow requests from our client
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
 
-// parse request body
 app.use(express.json());
 
-// mount routers
 app.use('/api', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/word', wordRouter);
@@ -64,6 +60,37 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+function print (path, layer) {
+  if (layer.route) {
+    layer.route.stack.forEach(print.bind(null, path.concat(split(layer.route.path))))
+  } else if (layer.name === 'router' && layer.handle.stack) {
+    layer.handle.stack.forEach(print.bind(null, path.concat(split(layer.regexp))))
+  } else if (layer.method) {
+    console.log('%s /%s',
+      layer.method.toUpperCase(),
+      path.concat(split(layer.regexp)).filter(Boolean).join('/'))
+  }
+}
+
+function split (thing) {
+  if (typeof thing === 'string') {
+    return thing.split('/')
+  } else if (thing.fast_slash) {
+    return ''
+  } else {
+    var match = thing.toString()
+      .replace('\\/?', '')
+      .replace('(?=\\/|$)', '$')
+      .match(/^\/\^((?:\\[.*+?^${}()|[\]\\\/]|[^.*+?^${}()|[\]\\\/])*)\$\//)
+    return match
+      ? match[1].replace(/\\(.)/g, '$1').split('/')
+      : '<complex:' + thing.toString() + '>'
+  }
+}
+
+app._router.stack.forEach(print.bind(null, []))
+
 
 function runServer(port = PORT) {
   const server = app

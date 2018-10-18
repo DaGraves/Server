@@ -6,7 +6,6 @@ mongoose.Promise = global.Promise;
 
 const wordSchema = mongoose.Schema({
   russian: { type: String, required: true },
-  translit: { type: String, required: true },
   english: { type: String, required: true }
 });
 

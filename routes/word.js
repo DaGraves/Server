@@ -35,8 +35,7 @@ router.get('/', (req, res, next) => {
       if (results) {
         let head = results.head;
         let nextWord = {
-          word: results.questions[head].wordId.russian,
-          translit: results.questions[head].wordId.translit
+          word: results.questions[head].wordId.russian
         };
         res.json(nextWord);
       } else {

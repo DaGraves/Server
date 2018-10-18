@@ -179,7 +179,6 @@ router.get('/progress', jwtAuth, (req, res, next) => {
       const mungedQuestions = results.questions.map(question => {
         return ({
           russian: question.wordId.russian,
-          translit: question.wordId.translit,
           english: question.wordId.english,
           score: question.score,
           attempts: question.attempts,
