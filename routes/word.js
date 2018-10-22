@@ -1,22 +1,15 @@
 'use strict';
 
-// npm packages
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
-
-// models
 const User = require('../models/User');
-
-// initialization
 const router = express.Router();
 
-// middlewares
 const options = { session: false, failWithError: true };
 const jwtAuth = passport.authenticate('jwt', options);
 router.use('/', jwtAuth);
 
-/* ========== GET THE USERS NEXT WORD ========== */
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
@@ -26,16 +19,14 @@ router.get('/', (req, res, next) => {
     return next(err);
   }
 
-  // send the next question for that User
   User
     .findById(userId, 'questions head')
     .populate('questions.wordId')
     .then(results => {
-      // console.log(results);
       if (results) {
         let head = results.head;
         let nextWord = {
-          word: results.questions[head].wordId.russian
+          word: results.questions[head].wordId.portuguese
         };
         res.json(nextWord);
       } else {
@@ -47,12 +38,10 @@ router.get('/', (req, res, next) => {
     });
 });
 
-/* ========== POST THE USERS GUESS FOR CURRENT WORD ========== */
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
   req.body.userId = userId;
   
-  // validate all required field were submitted
   const requiredFields = ['answer'];
   const missingField = requiredFields.find(field => !(field in req.body));
   if (missingField) {
@@ -63,7 +52,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
   
-  // validate fields that should be strings are actually of type 'string'
   const stringFields = ['answer'];
   const nonStringField = stringFields.find(field => {
     return ((req.body[field]) && (typeof req.body[field] !== 'string'));
@@ -76,7 +64,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
   
-  // validate fields that should be mongoose ObjectIds are valid ObjectIds
   const objectIdFields = ['userId'];
   const nonObjectIdField = objectIdFields.find(field => {
     return ((req.body[field]) && !mongoose.Types.ObjectId.isValid(req.body[field]));
@@ -88,9 +75,7 @@ router.post('/', (req, res, next) => {
     err.location = `${nonObjectIdField}`;
     return next(err);
   }
-  
-  // checked for existence and 'stringness' above,
-  // otherwise would have thrown an error already
+
   let { answer } = req.body;
   answer = answer.trim().toLowerCase();
   const response = {};
@@ -105,17 +90,13 @@ router.post('/', (req, res, next) => {
         return next(err);
       }
     
-      // save current question & head for use later
       const currQuestion = user.questions[user.head];
       const currHead = user.head;
-      // update the head to point at next question
       user.head = currQuestion.next;
 
-      // build response
       response.answer = currQuestion.wordId.english;
       response.correct = (answer === response.answer);
 
-      // mutate current question node based on answer
       currQuestion.attempts += 1;
       currQuestion.sessionAttempts += 1;
       const wordScore = response.correct ? 1 : 0;
@@ -123,14 +104,11 @@ router.post('/', (req, res, next) => {
       currQuestion.sessionScore += wordScore;
       currQuestion.mValue = response.correct ? currQuestion.mValue * 2 : 1;
       
-      // cycle through questions to find currQuestion's
-      // new location based on new mValue
       let nextNode = currQuestion;
       for (let i=0; i < currQuestion.mValue; i++) {
         nextNode = user.questions[nextNode.next];
       }
       
-      // swap next pointers to insert currQuestion after nextNode
       currQuestion.next = nextNode.next;
       nextNode.next = currHead;
       

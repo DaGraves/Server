@@ -1,24 +1,15 @@
 'use strict';
 
-// npm packages
 const express = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
-
-// models
 const User = require('../models/User');
 const Word = require('../models/Word');
-
-// middlewares
 const options = { session: false, failWithError: true };
 const jwtAuth = passport.authenticate('jwt', options);
-
-// initialization
 const router = express.Router();
 
-/* ========== POST/CREATE AN NEW USER ========== */
 router.post('/', (req, res, next) => {
-  // validate all required field were submitted
   const requiredFields = ['username', 'password', 'name'];
   const missingField = requiredFields.find(field => !(field in req.body));
   if (missingField) {
@@ -29,7 +20,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  // validate fields that should be strings are actually of type 'string'
   const stringFields = ['username', 'password', 'name'];
   const nonStringField = stringFields.find(field => {
     return ((req.body[field]) && (typeof req.body[field] !== 'string'));
@@ -42,7 +32,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  // validate that fields used to log in do not start or end with whitespace
   const explicitlyTrimmedFields = ['username', 'password'];
   const nonTrimmedField = explicitlyTrimmedFields.find(field => {
     return req.body[field].trim() !== req.body[field];
@@ -57,7 +46,6 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  // validate that fields with a required size meet the requirements
   const sizedFields = {
     name: {
       min: 1
@@ -67,7 +55,7 @@ router.post('/', (req, res, next) => {
     },
     password: {
       min: 10,
-      max: 72 // bcrypt limit
+      max: 72 
     }
   };
   const tooShortField = Object.keys(sizedFields).find(
@@ -93,8 +81,6 @@ router.post('/', (req, res, next) => {
   }
 
   let { username, password, name } = req.body;
-  // username & password come in pre-trimmed
-  // otherwise we throw an error before this
   name = name.trim();
 
   let user = {};
@@ -144,7 +130,6 @@ router.post('/', (req, res, next) => {
         .json(user);
     })
     .catch(err => {
-      // mongo err code for duplicate entry = 11000
       if (err.code === 11000) {
         err = new Error('Username already taken');
         err.status = 422;
@@ -155,11 +140,9 @@ router.post('/', (req, res, next) => {
     });
 });
 
-/* ========== GET A USERS PROGRESS ========== */
 router.get('/progress', jwtAuth, (req, res, next) => {
   const userId = req.user.id;
 
-  // validate userId as proper type through mongoose
   const objectIdFields = ['userId'];
   const nonObjectIdField = objectIdFields.find(field => {
     return ((req.body[field]) && !mongoose.Types.ObjectId.isValid(req.body[field]));
@@ -178,7 +161,7 @@ router.get('/progress', jwtAuth, (req, res, next) => {
     .then(results => {
       const mungedQuestions = results.questions.map(question => {
         return ({
-          russian: question.wordId.russian,
+          portuguese: question.wordId.portuguese,
           english: question.wordId.english,
           score: question.score,
           attempts: question.attempts,
@@ -194,11 +177,9 @@ router.get('/progress', jwtAuth, (req, res, next) => {
     });
 });
 
-/* ========== PUT/RESET USERS PROGRESS FOR CURRENT SESSION ========== */
 router.put('/reset', jwtAuth, (req, res, next) => {
   const userId = req.user.id;
 
-  // validate userId as proper type through mongoose
   const objectIdFields = ['userId'];
   const nonObjectIdField = objectIdFields.find(field => {
     return ((req.body[field]) && !mongoose.Types.ObjectId.isValid(req.body[field]));

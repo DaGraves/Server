@@ -1,0 +1,21 @@
+[
+    {
+        "potuguese": "Aprender",
+        "english": "learn",
+        "starting_order": 0
+    },
+    {
+        "portuguese": "Olá",
+        "english": "hello",
+        "starting_order": 1
+    },
+    {
+        "portuguese": "Corre",
+        "english": "run",
+        "starting_order": 2
+    }
+
+
+
+
+]

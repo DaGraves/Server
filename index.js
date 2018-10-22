@@ -1,24 +1,17 @@
 'use strict';
 
-// npm packages
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const passport = require('passport');
-
-// config
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
-
-// middlewares
-const localStrategy = require('./passport/local');
-const jwtStrategy = require('./passport/jwt');
-
-// routers
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const wordRouter = require('./routes/word');
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
 
 const app = express();
 const router = express.Router();
@@ -44,14 +37,12 @@ app.use('/api/users', userRouter);
 app.use('/api/word', wordRouter);
 
 
-// Custom 404 Not Found route handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// Custom Error Handler
 app.use((err, req, res, next) => {
   if (err.status) {
     const errBody = Object.assign({}, err, { message: err.message });
